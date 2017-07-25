@@ -1,3 +1,7 @@
+body {
+    background: red;
+}
+
 .navbar {
     border-radius: 0px;
     color: white;
