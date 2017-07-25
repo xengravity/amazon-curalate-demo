@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Amazon Pay & Curalate Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <p class="h3">Amazon Pay X Curalate Demo</p>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4>Overview</h4>
+                <p><strong>This page represents the Curalate Like2Buy page.</strong></p>
+                <p>
+                    <ul>
+                        <li>After configuring this demo, you will be presented with the Amazon Pay login button</li>
+                        <li>Upon logging in, you will be redirected to the interstitial page</li>
+                        <li>The interstitial page recieves data passed from Curalate, generates a URL with this data, and redirects the user to the Checkout URL</li>
+                        <li>Functionality will need to be built to read the URL parameters from the Checkout URL and add the items to the cart</li>
+                    </ul>
+
+                </p>
+            	<button id="configure-demo" type="button" class="btn btn-primary">Configure Demo</button>
+            </div>
+        </div>
+        <div id="configuration" class="panel panel-default hidden">
+            <div class="panel-body">
+                <h4>Configuration</h4>
+                <p>
+                    You can configure this demo to use your Amazon Pay account and website or you can <a href="#" id="sample-data"><strong>click here</strong></a> to use our test account.
+                </p>
+                <form>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">Amazon Seller ID</span>
+                                <input id="amazon-seller-id" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">Amazon Client ID</span>
+                                <input id="amazon-client-id" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">Environment</span>
+                                <select id="environment" class="form-control">
+                                    <option value="sandbox">Sandbox</option>
+                                    <option value="production">Production</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Interstitial URL</span>
+                        <input id="interstitial-url" type="text" class="form-control" placeholder="This URL has to be whitelisted under 'Allowed Return URLs' in Seller Central">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">Checkout URL</span>
+                        <input id="checkout-url" type="text" class="form-control" placeholder="This URL is the landing page where SKU data will be passed to">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">SKU ID</span>
+                                <input id="sku-id" type="text" class="form-control" placeholder="The item to be added to the cart">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">Misc Parameter</span>
+                                <input id="misc-parameter" type="text" class="form-control" placeholder="Used to pass additional information via parameters for testing">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="configuration-submit" type="button" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div id="demo" class="panel panel-default hidden">
+            <div class="panel-body">
+                
+                <h4>Demo</h4>
+                <p>The Amazon Pay login button below is using the credentials and account information configured above. This button shows up below the product image on like2buy.</p>
+                <div class="row">
+                    <div id="AmazonPayButton" class="col-xs-12 col-md-6"></div>
+                    <div class="col-xs-12 col-md-6"><button id="logout" type="button" class="btn btn-primary pull-right">Logout</button></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+
+		function showButton( amazonSellerID, interstitialURL, paramValueEncoded ) {
+		    var authRequest;
+		    OffAmazonPayments.Button("AmazonPayButton", amazonSellerID, {
+		        type: "PwA",
+		        color: "Gold",
+		        size: "medium",
+
+		        authorization: function() {
+		            loginOptions = {
+		                scope: "profile payments:widget payments:shipping_address",
+		                popup: false,
+		                state: paramValueEncoded
+		            };
+		            authRequest = amazon.Login.authorize(loginOptions, interstitialURL );
+		        },
+
+		        onError: function(error) {
+		            console.log('error');
+		        }
+		    });
+		    console.log( 'merchant id = ' + amazonSellerID );
+		};
+	</script>    
+	<script>
+		$( '#logout' ).on( 'click', function () {
+			 amazon.Login.logout();
+
+		    document.cookie = "amazon_Login_accessToken=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+		    window.location.reload( );
+		});
+
+		$( '#configure-demo' ).on( 'click', function () {
+			$( '#configuration' ).removeClass( 'hidden' ).addClass( 'show' );
+		});	
+
+		$( '#configuration-submit' ).on( 'click', function () {
+			if ( amazonSellerID.val() !== "" && amazonClientID.val() !== "" ) {
+				$( '#demo' ).removeClass( 'hidden' ).addClass( 'show' );
+				loadAmazonPay( environment.val() );
+			}
+		});
+
+		$( '#sample-data' ).on( 'click', function () {
+			insertSampleData();
+		});		
+
+		// Input Fields
+		var amazonSellerID 	= $( '#amazon-seller-id' );
+		var amazonClientID 	= $( '#amazon-client-id' );
+		var environment 	= $( '#environment' );
+		var interstitialURL = $( '#interstitial-url' );
+		var checkoutURL 	= $( '#checkout-url' );
+		var skuID 			= $( '#sku-id' );
+		var miscParameter 	= $( '#misc-parameter' );
+
+		function insertSampleData ( ) {
+			amazonSellerID.val( 'AVX6ERM5QT1ZB' );
+			amazonClientID.val( 'amzn1.application-oa2-client.4b79645ecb0d41ef92b23e50a9c4e691' );
+			environment.val( 'sandbox' );
+			interstitialURL.val( '/interstitial.html' );
+			checkoutURL.val( '/checkout.html' );
+			skuID.val( '12345' );
+			miscParameter.val( 'ABCDEFG' );
+		}	
+
+        function loadAmazonPay ( environment ) {
+	        window.onAmazonLoginReady = function() {
+	            amazon.Login.setClientId( amazonClientID.val() );
+	            amazon.Login.setUseCookie( true );
+	            console.log('client id = ' + amazonClientID.val() );
+	        };
+
+			window.onAmazonPaymentsReady = function() {
+				var paramValueEncoded = '';
+
+				paramValueEncoded += '?skuID=' + skuID.val() + '&amazonClientID=' + amazonClientID.val() +' &amazonSellerID=' + amazonSellerID.val() + '&environment=' + environment + '&checkoutURL=' + checkoutURL.val() + '&miscParameter=' + miscParameter.val(); 
+				paramValueEncoded = encodeURIComponent( paramValueEncoded );
+
+			    showButton( amazonSellerID.val(), interstitialURL.val(), paramValueEncoded );
+			};   
+			     	
+        	if( environment === 'production' ) {
+        		var src = 'https://static-na.payments-amazon.com/OffAmazonPayments/us/js/Widgets.js';
+        	} else {
+        		var src = 'https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js';
+        	}
+
+            $.getScript( src, function () {
+                console.log( 'environment = ' + environment );
+            });
+        }
+	</script>
+</body>
+
+</html>

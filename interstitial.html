@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Amazon Pay & Curalate Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <p class="h3">Amazon Pay X Curalate Demo</p>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4>Interstitial Page</h4>
+                <p>This page will be hosted on the same server as the webstore. This will not be hosted on Curalate or Amazon Pay servers.</p>
+                <ul>
+                	<li>The user will not see this page</li>
+                	<li>The purpose of this page is to take the SKU ID and other parameters from Curalate that were passed through the OAuth2 State Parameters, decode the parameters, and pass them in the URL redirect to the website URL</li>
+                	<li>You will need to set the "amazon_Login_accessToken" and "amazon_Login_state_cache" cookies on this page to keep the user session alive on your webstore</li>
+                	<li>All code to perform these functions are self contained in the source code of this page</li>
+                </ul>
+            	<p>
+            		<strong>The values that were captured from the previous page are:</strong><br>
+            		<table class="table">
+    					<tr>
+    						<td>SKU ID</td><td><span id="sku-id"></span></td>
+    					</tr>
+    					<tr>
+    						<td>Misc Parameter</td><td><span id="misc-parameter"></span></td>
+    					</tr>
+    					<tr>
+    						<td>Environment</td><td><span id="environment"></span></td>
+    					</tr>
+    					<tr>
+    						<td>Checkout URL</td><td><span id="checkout-url"></span></td>
+    					</tr>
+    					<tr>
+    						<td>Amazon Seller ID</td><td><span id="amazon-seller-id"></span></td>
+    					</tr>    					
+    					<tr>
+    						<td>Amazon Client ID</td><td><span id="amazon-client-id"></span></td>
+    					</tr>
+    					<tr>
+    						<td>Access Token</td><td><textarea id="access-token" value=""></textarea></td>
+    					</tr>
+  					</table>
+            	</p>
+            	<p><strong>The generated redirect URL is:</strong><br>
+            	<span id="redirect-url"></span></p>
+            	<button id="continue-demo" type="button" class="btn btn-primary">Continue Demo</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script>
+		function getURLParameter(name, source) {
+		    return decodeURIComponent((new RegExp('[?|&|#]' + name + '=' +
+		        '([^&;]+?)(&|#|;|$)').exec(source) || [, ""])[1].replace(/\+/g, '%20')) || null;
+		}
+		var accessToken = getURLParameter("access_token", location.hash);
+		var stateValue = decodeURIComponent(getURLParameter("state", location.href.split("#")[1]));
+
+		if (typeof accessToken === 'string' && accessToken.match(/^Atza/)) {
+		    document.cookie = "amazon_Login_accessToken=" + accessToken + ";secure";
+		}
+
+		function getHashParameter(name) {
+		    var regex;
+		    var results;
+		    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		    regex = new RegExp("[\\?&#]" + name + "=([^&#]*)");
+		    results = regex.exec(location.hash);
+		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, '%20'));
+		}
+
+		function setCookie(cname, cvalue) {
+		    var d = new Date();
+		    d.setTime(d.getTime() + 180000);
+		    var expires = "expires=" + d.toUTCString();
+		    document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/; Secure";
+		}
+
+		function getRedirectURL() {
+			var redirectURL = checkoutURL + '?skuID=' + skuID + '&miscParameter=' + miscParameter + '&environment=' + environment + '&amazonSellerID=' + amazonSellerID + '&amazonClientID=' + amazonClientID ;
+
+			return redirectURL;
+		}
+
+		var accessToken 	= getHashParameter('access_token');
+		var environment 	= getURLParameter('environment', stateValue);
+		var amazonSellerID  = getURLParameter('amazonSellerID', stateValue);
+		var amazonClientID 	= getURLParameter('amazonClientID', stateValue);
+		var checkoutURL 	= getURLParameter('checkoutURL', stateValue);
+		var skuID 			= getURLParameter( 'skuID', stateValue );
+		var miscParameter 	= getURLParameter('miscParameter', stateValue); console.log( amazonClientID );
+
+		var client_id_value = amazonClientID;
+		var newObj = {
+		    access_token: accessToken,
+		    max_age: getHashParameter('expires_in'),
+		    expiration_date: new Date().getTime() + (getHashParameter('expires_in') * 1000),
+		    client_id: client_id_value,
+		    scope: getHashParameter('scope')
+		};
+		setCookie('amazon_Login_state_cache', JSON.stringify(newObj));
+
+		$( '#access-token' ).val( accessToken );
+		$( '#environment' ).html( environment );
+		$( '#amazon-seller-id' ).html( amazonSellerID );
+		$( '#amazon-client-id' ).html( amazonClientID );
+		$( '#checkout-url' ).html( checkoutURL );
+		$( '#sku-id' ).html( skuID );
+		$( '#misc-parameter' ).html( miscParameter );    	
+		$( '#redirect-url').html( getRedirectURL() );
+		$( '#continue-demo' ).on( 'click', function () {
+			var redirectURL = getRedirectURL();
+		
+			window.location.href = redirectURL;
+		});		
+
+    </script>
+</body>
+
+</html>
