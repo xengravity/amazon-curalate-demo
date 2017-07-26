@@ -7,16 +7,16 @@ body {
     color: white;
 }
 
-.navbar p {
-    padding: 25px 0px;
-}
-
 .input-group {
     margin-bottom: 10px;
 }
 
 .input-group-addon {
     min-width: 150px;
+}
+
+#AmazonPayButton {
+    margin: 20px;
 }
 
 h1 {
