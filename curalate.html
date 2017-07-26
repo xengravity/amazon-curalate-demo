@@ -21,12 +21,12 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <h4>Overview</h4>
-                <p><strong>This page represents the Curalate Like2Buy page.</strong></p>
+                <p><h5>This page represents the Curalate Like2Buy page</h5></p>
                 <p>
                     <ul>
                         <li>After configuring this demo, you will be presented with the Amazon Pay login button</li>
-                        <li>Upon logging in, you will be redirected to the interstitial page</li>
-                        <li>The interstitial page recieves data passed from Curalate, generates a URL with this data, and redirects the user to the Checkout URL</li>
+                        <li>Upon logging in, you will be redirected to the <i>interstitial</i> page</li>
+                        <li>The <i>interstitial</i> page receives data passed from Curalate, generates a URL with this data, and redirects the user to the checkout URL</li>
                         <li>Functionality will need to be built to read the URL parameters from the Checkout URL and add the items to the cart</li>
                     </ul>
 
@@ -38,7 +38,7 @@
             <div class="panel-body">
                 <h4>Configuration</h4>
                 <p>
-                    You can configure this demo to use your Amazon Pay account and website or you can <a href="#" id="sample-data"><strong>click here</strong></a> to use our test account.
+                    You can configure this demo to use an Amazon Pay test merchant account by <a href="#" id="sample-data">clicking here</a> to fill out the fields below <strong> or </strong> you can manually enter the field values to use your own Amazon Pay account and URL's.
                 </p>
                 <form>
                     <div class="row">
@@ -94,11 +94,21 @@
             <div class="panel-body">
                 
                 <h4>Demo</h4>
-                <p>The Amazon Pay login button below is using the credentials and account information configured above. This button shows up below the product image on like2buy.</p>
+                <p>
+                    The Amazon Pay login button below is using the information configured above
+                    <ul>
+                        <li>This button shows up below the product image on like2buy</li>
+                        <li>If you are using the sandbox environment, you will need to sign in with a sandbox account</li>
+                        <li>If you are using the production environment, you will need to sign in with a production account</li>
+                        <li>The SKU ID, Misc Parameter, and Access Token will be passed through the OAuth2 state parameter to the <i>interstitial</i> page</li>
+                    </ul>
+                </p>
                 <div class="row">
                     <div id="AmazonPayButton" class="col-xs-12 col-md-6"></div>
                     <div class="col-xs-12 col-md-6"><button id="logout" type="button" class="btn btn-primary pull-right">Logout</button></div>
-                    
+                </div>
+                <div class="row">
+                    <div class="col-xs-12"><p>Click the Amazon Pay button to login</p></div>
                 </div>
             </div>
         </div>
