@@ -6,6 +6,14 @@ body {
     border-radius: 0px;
     color: white;
 }
+    .interstitial {
+        background: #4682b4;
+        border-color: #0d3e67;
+    }
+    .checkout {
+        background: #008800;
+        border-color: #045204;
+    }
 
 .input-group {
     margin-bottom: 10px;

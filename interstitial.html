@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse interstitial">
         <div class="container-fluid">
             <div class="navbar-header">
                 <h2>Amazon Pay X Curalate Demo</h2>
@@ -21,15 +21,21 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <h4>Interstitial Page</h4>
-                <p>This page will be hosted on the same server as the webstore. This will not be hosted on Curalate or Amazon Pay servers.</p>
+                <p>
+                    The purpose of this page is to show that the SKU ID and other parameters were passed from Curalate, through the Amazon Pay login process via OAuth2 State Parameters, 
+                    and landed on the <i>interstitial</i> page with the values still accessible.
+                </p>
                 <ul>
-                	<li>The user will not see this page</li>
-                	<li>The purpose of this page is to take the SKU ID and other parameters from Curalate that were passed through the OAuth2 State Parameters, decode the parameters, and pass them in the URL redirect to the website URL</li>
+                    <li>This page will need to be hosted on the same domain as the checkout URL</li>
+                    <li>This will not be hosted on Curalate or Amazon Pay servers</li>
                 	<li>You will need to set the "amazon_Login_accessToken" and "amazon_Login_state_cache" cookies on this page to keep the user session alive on your webstore</li>
+                    <li>This page will be virtually invisible to the customer as it will immediately redirect to the checkout URL</li>
+                    <li>In this demo you will be redirected to the checkout URL with the SKU ID and other parameters passed in the URL. You will need to take these values and create your own functionality to add these items to the cart</li>                    
+                    <li>Alternatively, you can take the SKU ID from this page, call your add to cart API, then redirect to the checkout URL upon success</li>
                 	<li>All code to perform these functions are self contained in the source code of this page</li>
                 </ul>
             	<p>
-            		<strong>The values that were captured from the previous page are:</strong><br>
+            		<strong>Values captured from Curalate:</strong><br>
             		<table class="table">
     					<tr>
     						<td>SKU ID</td><td><span id="sku-id"></span></td>
