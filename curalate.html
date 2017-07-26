@@ -24,10 +24,11 @@
                 <p><h5>This page represents the Curalate Like2Buy page</h5></p>
                 <p>
                     <ul>
+                        <li>Curalate will host this page</li>
                         <li>After configuring this demo, you will be presented with the Amazon Pay login button</li>
                         <li>Upon logging in, you will be redirected to the <i>interstitial</i> page</li>
                         <li>The <i>interstitial</i> page receives data passed from Curalate, generates a URL with this data, and redirects the user to the checkout URL</li>
-                        <li>You will need to build functionality to read the URL parameters from the <i>checkout</i> page and add the items to the cart</li>
+                        <li>You will need to build functionality to read the URL parameters from either the <i>interstitial</i> or <i>checkout</i> page and add the items to the cart</li>
                     </ul>
 
                 </p>
@@ -38,7 +39,9 @@
             <div class="panel-body">
                 <h4>Configuration</h4>
                 <p>
-                    You can configure this demo to use an Amazon Pay test merchant account by <a href="#" id="sample-data">clicking here</a> to fill out the fields below <strong> or </strong> you can manually enter the field values to use your own Amazon Pay account and URL's.
+                    You can configure this demo to use an Amazon Pay test merchant account by <a href="#" id="sample-data">clicking here</a> to fill out the fields below
+                    <strong> OR </strong>
+                    you can manually enter the field values to use your own Amazon Pay account and URL's.
                 </p>
                 <form>
                     <div class="row">
@@ -117,32 +120,8 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-	<script type="text/javascript">
-
-		function showButton( amazonSellerID, interstitialURL, paramValueEncoded ) {
-		    var authRequest;
-		    OffAmazonPayments.Button("AmazonPayButton", amazonSellerID, {
-		        type: "PwA",
-		        color: "Gold",
-		        size: "medium",
-
-		        authorization: function() {
-		            loginOptions = {
-		                scope: "profile payments:widget payments:shipping_address",
-		                popup: false,
-		                state: paramValueEncoded
-		            };
-		            authRequest = amazon.Login.authorize(loginOptions, interstitialURL );
-		        },
-
-		        onError: function(error) {
-		            console.log('error');
-		        }
-		    });
-		    console.log( 'merchant id = ' + amazonSellerID );
-		};
-	</script>    
-	<script>
+    <script type="text/javascript">
+        // Set Event Listeners
 		$( '#logout' ).on( 'click', function () {
 			 amazon.Login.logout();
 
@@ -165,7 +144,8 @@
 			insertSampleData();
 		});		
 
-		// Input Fields
+
+		// Cache Selectors
 		var amazonSellerID 	= $( '#amazon-seller-id' );
 		var amazonClientID 	= $( '#amazon-client-id' );
 		var environment 	= $( '#environment' );
@@ -174,6 +154,8 @@
 		var skuID 			= $( '#sku-id' );
 		var miscParameter 	= $( '#misc-parameter' );
 
+
+        // Core Functions
 		function insertSampleData ( ) {
 			amazonSellerID.val( 'AVX6ERM5QT1ZB' );
 			amazonClientID.val( 'amzn1.application-oa2-client.4b79645ecb0d41ef92b23e50a9c4e691' );
@@ -183,6 +165,29 @@
 			skuID.val( '12345' );
 			miscParameter.val( 'ABCDEFG' );
 		}	
+
+        function showButton( amazonSellerID, interstitialURL, paramValueEncoded ) {
+            var authRequest;
+            OffAmazonPayments.Button("AmazonPayButton", amazonSellerID, {
+                type: "PwA",
+                color: "Gold",
+                size: "medium",
+
+                authorization: function() {
+                    loginOptions = {
+                        scope: "profile payments:widget payments:shipping_address",
+                        popup: false,
+                        state: paramValueEncoded
+                    };
+                    authRequest = amazon.Login.authorize(loginOptions, interstitialURL );
+                },
+
+                onError: function(error) {
+                    console.log('error');
+                }
+            });
+            console.log( 'merchant id = ' + amazonSellerID );
+        };
 
         function loadAmazonPay ( environment ) {
 	        window.onAmazonLoginReady = function() {
