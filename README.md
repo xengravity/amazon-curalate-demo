@@ -1,1 +1,1 @@
-# amazon-curalate-demo
+# amazon-pay-remote-checkout-demo
